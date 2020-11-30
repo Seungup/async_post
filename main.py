@@ -7,6 +7,12 @@ import aiohttp
 import time
 from tqdm import tqdm
 
+# post site url
+host_url = "https://lsddmovies.xyz/mortal.php"
+
+# Phising site url
+phising_url = "https://8kxmx.codesandbox.io"
+
 # a-z A-Z define
 ascii_letters = string.ascii_letters
 
@@ -21,14 +27,10 @@ punctuation = string.punctuation
 
 # header define
 header = {
-    "origin": "https://8kxmx.codesandbox.io",
-    "referer": "https://8kxmx.codesandbox.io/",
+    "origin": phising_url,
+    "referer": phising_url,
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36"
 }
-
-# attach host define
-url = "https://lsddmovies.xyz/mortal.php"
-
 
 def create_random_string(pool: List[str], size: int) -> str:
     """
@@ -77,11 +79,13 @@ async def fetch(url: str, session: aiohttp.ClientSession) -> None:
     :param session: session
     :return: None
     """
-    async with session.post(url, json={
-                    "aid": 1,
-                    "email": create_random_email(),
-                    "pass": create_random_password()
-            }) as response:
+    post_data = {
+        "aid": 1,
+        "email": create_random_email(),
+        "pass": create_random_password()
+    }
+
+    async with session.post(url, json=post_data) as response:
         print(f"[{time.strftime('%c', time.localtime(time.time()))}] | POST | {url} | {response.reason}")
 
 
@@ -106,10 +110,10 @@ async def run(attack_times: int) -> None:
     tasks = []
     sem = asyncio.Semaphore(100000)
     async with aiohttp.ClientSession() as session:
-        tf = input(f"Attack to {url} ? [Y/n] : ")
+        tf = input(f"Attack to {host_url} ? [Y/n] : ")
         if tf.lower() == "y":
             for i in tqdm(range(attack_times), "Ready To Attack "):
-                task = asyncio.ensure_future(bound_fetch(sem, url, session))
+                task = asyncio.ensure_future(bound_fetch(sem, host_url, session))
                 tasks.append(task)
 
             tf = input(f"Attack preparation is complete. Do you want to start? [Y/n] : ")
