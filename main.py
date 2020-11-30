@@ -79,14 +79,17 @@ async def fetch(url: str, session: aiohttp.ClientSession) -> None:
     :param session: session
     :return: None
     """
+    email = create_random_email()
+    password = create_random_password()
     post_data = {
         "aid": 1,
-        "email": create_random_email(),
-        "pass": create_random_password()
+        "email": email,
+        "pass": password
     }
     try:
         async with session.post(url, json=post_data) as response:
-            print(f"[{time.strftime('%c', time.localtime(time.time()))}] | POST | {url} | {response.reason}")
+            print(f"POST | [{time.strftime('%c', time.localtime(time.time()))}] | E-MAIL : {email} | "
+                  f"PASSWORD : {password} | {response.reason}")
     except:
         return
 
