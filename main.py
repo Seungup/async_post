@@ -112,7 +112,7 @@ async def run(attack_times: int) -> None:
     :return: None
     """
     tasks = []
-    sem = asyncio.Semaphore(102400)
+    sem = asyncio.Semaphore(1000)
     async with aiohttp.ClientSession() as session:
         tf = input(f"Attack to {host_url} ? [Y/n] : ")
         if tf.lower() == "y":
